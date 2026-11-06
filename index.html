@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomeKeeper - Personal Book List</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header with Stats -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo-area">
+          <span class="logo-icon" aria-hidden="true">📚</span>
+          <div>
+            <h1>TomeKeeper</h1>
+            <p class="tagline">Your personal offline library index</p>
+          </div>
+        </div>
+
+        <!-- Total Books Counter -->
+        <div class="stats-badge" id="statsBadge" aria-live="polite">
+          <span class="stats-label">Total Books</span>
+          <span class="stats-count" id="totalBookCount">0</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Book Form Card (Add / Edit) -->
+      <section class="card form-card" aria-labelledby="formTitle">
+        <div class="form-header">
+          <h2 id="formTitle">Add a New Book</h2>
+          <span id="formBadge" class="mode-badge hidden">Edit Mode</span>
+        </div>
+
+        <form id="bookForm" novalidate>
+          <input type="hidden" id="editBookId" value="">
+
+          <div class="form-group">
+            <label for="bookName">Book Name / Title <span class="required-star">*</span></label>
+            <input 
+              type="text" 
+              id="bookName" 
+              name="bookName" 
+              placeholder="e.g. The Hitchhiker's Guide to the Galaxy" 
+              autocomplete="off"
+              required
+            >
+            <span class="error-msg" id="nameError"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookAuthor">Author <span class="required-star">*</span></label>
+              <input 
+                type="text" 
+                id="bookAuthor" 
+                name="bookAuthor" 
+                placeholder="e.g. Douglas Adams" 
+                autocomplete="off"
+                required
+              >
+              <span class="error-msg" id="authorError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="bookYear">Publication Year <span class="required-star">*</span></label>
+              <input 
+                type="number" 
+                id="bookYear" 
+                name="bookYear" 
+                placeholder="e.g. 1979" 
+                min="-2000" 
+                max="2099" 
+                required
+              >
+              <span class="error-msg" id="yearError"></span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              <span class="btn-icon">＋</span>
+              <span id="submitBtnText">Add Book</span>
+            </button>
+            <button type="button" id="cancelEditBtn" class="btn btn-secondary hidden">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Book List Section -->
+      <section class="card list-card" aria-labelledby="listHeading">
+        <div class="list-toolbar">
+          <div class="toolbar-title-group">
+            <h2 id="listHeading">Alphabetical Catalogue</h2>
+            <span class="search-feedback" id="searchFeedback"></span>
+          </div>
+
+          <!-- Search Input -->
+          <div class="search-box">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input 
+              type="search" 
+              id="searchInput" 
+              placeholder="Search by title, author, or year..." 
+              aria-label="Search books"
+              autocomplete="off"
+            >
+            <button type="button" id="clearSearchBtn" class="clear-search hidden" aria-label="Clear search">✕</button>
+          </div>
+        </div>
+
+        <!-- Empty State Container (Friendly & Nerdy) -->
+        <div id="emptyState" class="empty-state hidden" role="region" aria-live="polite">
+          <!-- Filled dynamically via script.js -->
+        </div>
+
+        <!-- Book List Elements -->
+        <ul id="bookList" class="book-list" aria-label="Books in alphabetical order">
+          <!-- Generated via JS -->
+        </ul>
+      </section>
+    </main>
+
+    <!-- Confirmation Modal Dialog -->
+    <dialog id="deleteConfirmDialog" class="confirm-dialog" aria-labelledby="dialogTitle">
+      <div class="dialog-content">
+        <div class="dialog-icon-wrapper" aria-hidden="true">
+          <span class="dialog-icon">🗑️</span>
+        </div>
+        <h3 id="dialogTitle">Delete Book?</h3>
+        <p id="dialogMessage">Are you sure you want to remove this book from your catalogue?</p>
+        <div class="dialog-actions">
+          <button type="button" id="dialogCancelBtn" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="dialogConfirmBtn" class="btn btn-danger">Confirm Delete</button>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="app-footer">
+      <p>Data stored locally in your browser &bull; Sorted A to Z automatically</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
