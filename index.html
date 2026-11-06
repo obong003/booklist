@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- Header with Stats -->
+    <!-- Header with Stats & Theme Switcher -->
     <header class="app-header">
       <div class="header-content">
         <div class="logo-area">
@@ -22,10 +22,17 @@
           </div>
         </div>
 
-        <!-- Total Books Counter -->
-        <div class="stats-badge" id="statsBadge" aria-live="polite">
-          <span class="stats-label">Total Books</span>
-          <span class="stats-count" id="totalBookCount">0</span>
+        <div class="header-actions">
+          <!-- Total Books Counter -->
+          <div class="stats-badge" id="statsBadge" aria-live="polite" title="Total books in catalogue">
+            <span class="stats-label">Total Books</span>
+            <span class="stats-count" id="totalBookCount">0</span>
+          </div>
+
+          <!-- Theme Toggle Button -->
+          <button type="button" id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+            <span id="themeIcon">🌙</span>
+          </button>
         </div>
       </div>
     </header>
@@ -41,6 +48,7 @@
         <form id="bookForm" novalidate>
           <input type="hidden" id="editBookId" value="">
 
+          <!-- Name -->
           <div class="form-group">
             <label for="bookName">Book Name / Title <span class="required-star">*</span></label>
             <input 
@@ -54,6 +62,7 @@
             <span class="error-msg" id="nameError"></span>
           </div>
 
+          <!-- Author and Year -->
           <div class="form-row">
             <div class="form-group">
               <label for="bookAuthor">Author <span class="required-star">*</span></label>
@@ -69,7 +78,7 @@
             </div>
 
             <div class="form-group">
-              <label for="bookYear">Publication Year <span class="required-star">*</span></label>
+              <label for="bookYear">Year <span class="required-star">*</span></label>
               <input 
                 type="number" 
                 id="bookYear" 
@@ -80,6 +89,42 @@
                 required
               >
               <span class="error-msg" id="yearError"></span>
+            </div>
+          </div>
+
+          <!-- Optional Status, 1-5 Star Rating, and Bookmark Tag -->
+          <div class="form-row-custom">
+            <!-- Optional Status Tag -->
+            <div class="form-group">
+              <label for="bookStatus">Status Tag <span class="optional-label">(optional)</span></label>
+              <select id="bookStatus" name="bookStatus">
+                <option value="">No Status Tag</option>
+                <option value="want-to-read">📖 Want to Read (Wishlist)</option>
+                <option value="reading">⏳ Currently Reading</option>
+                <option value="finished">✅ Finished</option>
+              </select>
+            </div>
+
+            <!-- Star Rating (1-5) -->
+            <div class="form-group">
+              <label for="starPicker">Rating <span class="optional-label">(1–5 Stars)</span></label>
+              <div class="star-rating-picker" id="starPicker" role="radiogroup" aria-label="Book rating from 1 to 5 stars">
+                <button type="button" class="star-btn" data-value="1" title="1 star" aria-label="1 star">★</button>
+                <button type="button" class="star-btn" data-value="2" title="2 stars" aria-label="2 stars">★</button>
+                <button type="button" class="star-btn" data-value="3" title="3 stars" aria-label="3 stars">★</button>
+                <button type="button" class="star-btn" data-value="4" title="4 stars" aria-label="4 stars">★</button>
+                <button type="button" class="star-btn" data-value="5" title="5 stars" aria-label="5 stars">★</button>
+              </div>
+              <input type="hidden" id="bookRating" value="0">
+            </div>
+
+            <!-- Bookmark Tag Checkbox -->
+            <div class="form-group form-group-checkbox">
+              <label class="checkbox-label" for="bookBookmark">
+                <input type="checkbox" id="bookBookmark" name="bookBookmark">
+                <span class="checkbox-custom">🔖</span>
+                <span>Bookmark Tag</span>
+              </label>
             </div>
           </div>
 
@@ -98,9 +143,36 @@
       <!-- Book List Section -->
       <section class="card list-card" aria-labelledby="listHeading">
         <div class="list-toolbar">
-          <div class="toolbar-title-group">
-            <h2 id="listHeading">Alphabetical Catalogue</h2>
-            <span class="search-feedback" id="searchFeedback"></span>
+          <div class="toolbar-top-row">
+            <div class="toolbar-title-group">
+              <h2 id="listHeading">Alphabetical Catalogue</h2>
+              <span class="search-feedback" id="searchFeedback"></span>
+            </div>
+
+            <!-- Surprise Me Button -->
+            <button type="button" id="surpriseMeBtn" class="btn btn-surprise" title="Randomly select a book to read next!">
+              <span>🎲</span>
+              <span>Surprise Me</span>
+            </button>
+          </div>
+
+          <!-- Simple Filter: All, Finished, Wishlist, Currently Reading -->
+          <div class="filter-tabs" role="tablist" aria-label="Filter books by status">
+            <button type="button" class="filter-tab active" data-filter="all" role="tab" aria-selected="true">
+              All <span class="tab-count" id="countAll">0</span>
+            </button>
+            <button type="button" class="filter-tab" data-filter="finished" role="tab" aria-selected="false">
+              ✅ Finished <span class="tab-count" id="countFinished">0</span>
+            </button>
+            <button type="button" class="filter-tab" data-filter="wishlist" role="tab" aria-selected="false">
+              📖 Wishlist <span class="tab-count" id="countWishlist">0</span>
+            </button>
+            <button type="button" class="filter-tab" data-filter="reading" role="tab" aria-selected="false">
+              ⏳ Currently Reading <span class="tab-count" id="countReading">0</span>
+            </button>
+            <button type="button" class="filter-tab" data-filter="bookmarked" role="tab" aria-selected="false">
+              🔖 Bookmarked <span class="tab-count" id="countBookmarked">0</span>
+            </button>
           </div>
 
           <!-- Search Input -->
@@ -109,7 +181,7 @@
             <input 
               type="search" 
               id="searchInput" 
-              placeholder="Search by title, author, or year..." 
+              placeholder="Search by title, author, or year (Press '/' to focus)..." 
               aria-label="Search books"
               autocomplete="off"
             >
@@ -129,7 +201,7 @@
       </section>
     </main>
 
-    <!-- Confirmation Modal Dialog -->
+    <!-- Delete Confirmation Modal Dialog -->
     <dialog id="deleteConfirmDialog" class="confirm-dialog" aria-labelledby="dialogTitle">
       <div class="dialog-content">
         <div class="dialog-icon-wrapper" aria-hidden="true">
@@ -144,12 +216,38 @@
       </div>
     </dialog>
 
+    <!-- Surprise Me Modal Dialog -->
+    <dialog id="surpriseDialog" class="confirm-dialog" aria-labelledby="surpriseTitle">
+      <div class="dialog-content surprise-modal-content">
+        <div class="dialog-icon-wrapper surprise-icon" aria-hidden="true">
+          <span>🎲</span>
+        </div>
+        <h3 id="surpriseTitle">The Archive Has Chosen!</h3>
+        <p class="surprise-intro">Your next literary adventure awaits:</p>
+        
+        <div class="surprise-book-card" id="surpriseBookDetails">
+          <!-- Populated by script.js -->
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" id="surpriseRerollBtn" class="btn btn-secondary">🎲 Roll Again</button>
+          <button type="button" id="surpriseCloseBtn" class="btn btn-primary">Awesome, Let's Read!</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Footer with Backup / Restore -->
     <footer class="app-footer">
-      <p>Data stored locally in your browser &bull; Sorted A to Z automatically</p>
+      <div class="footer-backup-actions">
+        <button type="button" id="exportBtn" class="btn-link" title="Export books to JSON">💾 Export Library</button>
+        <span class="footer-divider">&bull;</span>
+        <button type="button" id="importBtn" class="btn-link" title="Import books from JSON">📥 Import Library</button>
+        <input type="file" id="importFileInput" accept=".json" class="hidden">
+      </div>
+      <p class="footer-credits">Data stored locally in your browser &bull; Sorted A to Z automatically</p>
     </footer>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
